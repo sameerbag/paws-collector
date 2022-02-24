@@ -7,6 +7,7 @@ const USERAGENT = 'alertlogic_security_1.0';
 
 function authenticate(baseUrl, clientId, clientSecret) {
     let restServiceClient = new RestServiceClient(baseUrl);
+    AlLogger.debug(`Get Authenticate: ${restServiceClient.url}`);
     return new Promise(function (resolve, reject) {
         return restServiceClient.post(`/oauth2/token`, {
             form: {
@@ -26,6 +27,7 @@ function authenticate(baseUrl, clientId, clientSecret) {
 
 function getList(apiDetails, accumulator, apiEndpoint, token) {
     let restServiceClient = new RestServiceClient(apiEndpoint);
+    AlLogger.debug(`Get List: ${restServiceClient.url}`);
     if (apiDetails.method === "GET") {
         return new Promise(function (resolve, reject) {
             restServiceClient.get(apiDetails.url, {
@@ -57,6 +59,7 @@ function getIncidents(ids, apiHostName, token) {
             });
         });
     }
+    AlLogger.debug(`Get Incidents: ${restServiceClient.url}`);
     return new Promise(function (resolve, reject) {
         return restServiceClient.post('', {
             headers: {
@@ -83,6 +86,7 @@ function getDetections(ids, APIHostName, token) {
             });
         });
     }
+    AlLogger.debug(`Get Detections: ${restServiceClient.url}`);
     return new Promise(function (resolve, reject) {
         return restServiceClient.post('', {
             headers: {
@@ -111,12 +115,14 @@ function getAPIDetails(state) {
         case INCIDENT:
             filter = `end:>"${state.since}"+end:<"${state.until}"`;
             url = `/incidents/queries/incidents/v1?limit=500&offset=${state.offset}&filter=${encodeURIComponent(filter)}`;
+            AlLogger.debug(`Get Incident API details: ${url}`);
             typeIdPaths = [{ path: ["incident_type"] }];
             tsPaths = [{ path: ["created"] }];
             break;
         case DETECTION:
             filter = `last_behavior:>"${state.since}"+last_behavior:<"${state.until}"`;
             url = `/detects/queries/detects/v1?limit=1000&offset=${state.offset}&filter=${encodeURIComponent(filter)}`;
+            AlLogger.debug(`Get Incident API details: ${url}`);
             typeIdPaths = [];
             tsPaths = [{ path: ["created_timestamp"] }];
             break;
